@@ -11,6 +11,7 @@ const secondsValue = document.querySelector('span[data-seconds]');
 
 btnStart.setAttribute('disabled', true);
 
+const TIMER_INTERVAL = 1000;
 let currentDate = new Date();
 let remainingTime = null;
 let intervalId = null;
@@ -23,8 +24,7 @@ const options = {
   onClose(selectedDates) {
     remainingTime = selectedDates[0] - currentDate;
     if (remainingTime < 0) {
-        Notiflix.Notify.failure('Please choose a date in the future');
-      
+      Notiflix.Notify.failure('Please choose a date in the future');
     } else {
       btnStart.removeAttribute('disabled');
     }
@@ -52,25 +52,21 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-function addLeadingZero({days, hours, minutes, seconds}) {
+function addLeadingZero({ days, hours, minutes, seconds }) {
   const formatedDays = days.toString().padStart(2, '0');
-  const formatedHours =hours.toString().padStart(2, '0');
+  const formatedHours = hours.toString().padStart(2, '0');
   const formatedMinutes = minutes.toString().padStart(2, '0');
   const formatedSeconds = seconds.toString().padStart(2, '0');
 
   return { formatedDays, formatedHours, formatedMinutes, formatedSeconds };
 }
 
-
-
-
-
-function updateInterface(
-  {formatedDays,
+function updateInterface({
+  formatedDays,
   formatedHours,
   formatedMinutes,
-  formatedSeconds}
-) {
+  formatedSeconds,
+}) {
   daysValue.textContent = formatedDays;
   hoursValue.textContent = formatedHours;
   minutesValue.textContent = formatedMinutes;
@@ -79,16 +75,17 @@ function updateInterface(
 
 function runTimer() {
   intervalId = setInterval(() => {
-    remainingTime -= 1000;
+    remainingTime -= TIMER_INTERVAL;
 
     updateInterface(addLeadingZero(convertMs(remainingTime)));
 
     if (remainingTime < 1000) {
-      stopTimer(() => {
-        clearInterval(intervalId);
-      });
+      stopTimer();
     }
-  }, 1000);
+  }, TIMER_INTERVAL);
+}
+function stopTimer() {
+  clearInterval(intervalId);
 }
 
 btnStart.addEventListener('click', btnStartClick);
@@ -96,6 +93,6 @@ btnStart.addEventListener('click', btnStartClick);
 function btnStartClick() {
   updateInterface(addLeadingZero(convertMs(remainingTime)));
   runTimer();
-  btnStart.setAttribute("disabled", true);
-  dataTimePicker.setAttribute("disabled", true);
+  btnStart.setAttribute('disabled', true);
+  dataTimePicker.setAttribute('disabled', true);
 }
