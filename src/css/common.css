@@ -19,7 +19,7 @@ img {
 .timer {
   display: flex;
   gap: 20px;
-  }
+}
 
 .field {
   display: flex;
